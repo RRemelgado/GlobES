@@ -12,5 +12,5 @@ We welcome interested parties to help us review and improve our classification r
 
 #### Disclaimer
 <p align="justify">
-The current code was re-designed based on the original to accompany the submission of a dedicated paper that provides an extensive description of our methods. Here, we prioritized readibility over scalability, requiring adaptation from individuals interested in using this code for large scale applications.
+The code provided in this repository was designed to accompany the submission of a dedicated paper where we provide a detailed description of the underlying methods. Consequently, we prioritized readibility over scalability and does not support large scale applications such as GlobES. Moreover, we modified our original code, which was supported on our own data structure and computational assets. Here, we generalized our code, but do not provide the raw data which is available online, although not having undergone our pre-processing steps. Therefore, our code should be seen solely as a guideline to reproduce our work, and not as a direct path to GlobES. 
 </p>
