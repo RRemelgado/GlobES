@@ -54,7 +54,6 @@ ods = rt.open(i + 'tropicalMountains.tif', 'w+', **p)
 # 1. load climate map
 #----------------------------------------------------------------------------------------------------------------------------#
 
-
 for s in sp:
     
     #=========================================================================#
@@ -170,7 +169,7 @@ for s in sp:
             ca[i & np.isin(ca, brc)] = 5
             ids.write(ca, window=w, indexes=1)
     
-    # "fix" tundra climates in mountain areas
+    # "fix" tundra/artic climates in mountain areas
     if (dc > 1) & (dc < 7):
         
         # read climate map subset
@@ -183,21 +182,13 @@ for s in sp:
         if dc == 5: px = np.isin(ct, tdc)
         if dc == 6: px = np.isin(ct, twc)
         
-        if (np.sum(px) > 0):
-            ac = ct[px][sorted(range(len(ct[px])), key=cc.__getitem__)[len(ct[px])-1]]
+        # determine dominant sub-climate type
+        ac = ct[px][sorted(range(len(ct[px])), key=cc.__getitem__)[len(ct[px])-1]]
         
-        if (dc == 6) & (np.sum(px) == 0):
-            ac = 5
-        
-        ca[i & (np.isin(ca, brc) | np.isin(ca, [29,30]))] = ac
-        
-        if ((dc == 5) | (dc == 6)):
-            ca[i & (ca == 7)] = 6
-            ca[i & np.isin(ca, tpc)] = 2
-            ca[i & np.isin(ca, mdc)] = 11
-        
-        ids.write(ca, window=w, indexes=1)
-        ca = None
+      
+    # write data for target mountain
+    ids.write(ca, window=w, indexes=1)
+    ca = None
     
     f = None
     i = None
