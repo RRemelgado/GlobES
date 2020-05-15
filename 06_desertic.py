@@ -41,8 +41,8 @@ s = [[1,1,1], [1,1,1], [1,1,1]]
 # 1. load data for input variables
 #----------------------------------------------------------------------------------------------------------------------------#
 
-climate_artic = rt.open(variables['variable'][variables['variable'] == 'Artic climate'].values[0]).read(1)
-climate_tundra = rt.open(variables['variable'][variables['variable'] == 'Tundra climate'].values[0]).read(1)
+climate_artic = rt.open(variables['variable'][variables['variable'] == 'artic climate'].values[0]).read(1)
+climate_tundra = rt.open(variables['variable'][variables['variable'] == 'tundra climate'].values[0]).read(1)
 snowCover = rt.open(variables['variable'][variables['variable'] == 'snow cover'].values[0]).read(1)
 snowRecurrence = rt.open(variables['variable'][variables['variable'] == 'snow cover recurrence'].values[0]).read(1)
 soilDepth = rt.open(variables['variable'][variables['variable'] == 'soil depth'].values[0]).read(1)

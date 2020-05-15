@@ -36,11 +36,11 @@ factor = 3 # aggregation factor for total area estimation
 # 1. load data for input variables
 #----------------------------------------------------------------------------------------------------------------------------#
 
-oceanDistance = rt.open(variables['variable'][variables['variable'] == 'Ocean distance'].values[0]).read(1)
-elevation = rt.open(variables['variable'][variables['variable'] == 'Elevation'].values[0]).read(1)
-slope = rt.open(variables['variable'][variables['variable'] == 'Slope'].values[0]).read(1)
-abyssalPlains = rt.open(variables['variable'][variables['variable'] == 'Abyssal plains'].values[0]).read(1)
-abyssalMountains = rt.open(variables['variable'][variables['variable'] == 'Abyssal mountains'].values[0]).read(1)
+oceanDistance = rt.open(variables['variable'][variables['variable'] == 'ocean distance'].values[0]).read(1)
+elevation = rt.open(variables['variable'][variables['variable'] == 'elevation'].values[0]).read(1)
+slope = rt.open(variables['variable'][variables['variable'] == 'slope'].values[0]).read(1)
+abyssalPlains = rt.open(variables['variable'][variables['variable'] == 'abyssal plains'].values[0]).read(1)
+abyssalMountains = rt.open(variables['variable'][variables['variable'] == 'abyssal mountains'].values[0]).read(1)
 seamounts = rt.open(variables['variable'][variables['variable'] == 'Seamounts'].values[0]).read(1)
 pWater = rt.open(variables['variable'][variables['variable'] == 'permanent water'].values[0]).read(1)
 

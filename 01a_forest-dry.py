@@ -29,11 +29,11 @@ factor = 3 # aggregation factor for total area estimation
 # 1. load data for input variables
 #----------------------------------------------------------------------------------------------------------------------------#
 
-climate_boreal = rt.open(variables['variable'][variables['variable'] == 'Boreal climate'].values[0]).read(1)
-climate_artic = rt.open(variables['variable'][variables['variable'] == 'Artic climate'].values[0]).read(1)
-climate_tundra = rt.open(variables['variable'][variables['variable'] == 'Tundra climate'].values[0]).read(1)
-climate_temperate = rt.open(variables['variable'][variables['variable'] == 'Temperate climate'].values[0]).read(1)
-climate_mediterranean = rt.open(variables['variable'][variables['variable'] == 'Mediterranean climate'].values[0]).read(1)
+climate_boreal = rt.open(variables['variable'][variables['variable'] == 'boreal climate'].values[0]).read(1)
+climate_artic = rt.open(variables['variable'][variables['variable'] == 'artic climate'].values[0]).read(1)
+climate_tundra = rt.open(variables['variable'][variables['variable'] == 'tundra climate'].values[0]).read(1)
+climate_temperate = rt.open(variables['variable'][variables['variable'] == 'temperate climate'].values[0]).read(1)
+climate_mediterranean = rt.open(variables['variable'][variables['variable'] == 'mediterranean climate'].values[0]).read(1)
 climate_sdry = rt.open(variables['variable'][variables['variable'] == 'sub-/tropical dry climate'].values[0]).read(1)
 climate_smoist = rt.open(variables['variable'][variables['variable'] == 'sub-/tropical moist climate'].values[0]).read(1)
 climate_savanna = rt.open(variables['variable'][variables['variable'] == 'savanna climate'].values[0]).read(1)
