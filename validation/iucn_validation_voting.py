@@ -6,7 +6,7 @@ Created on Thu Mar  5 09:34:29 2020
 """
 
 #------------------------------------------------------------------------------------------------------------------#
-# 0. import modules
+# 0. import modules and read arguments
 #------------------------------------------------------------------------------------------------------------------#
 
 from argparse import ArgumentParser
@@ -15,47 +15,45 @@ import rasterio as rt
 import pandas as pd
 import numpy as np
 import fiona as fn
-import glob2 as g
 
-#-----------------------------------------------------------------------------#
-#
-#-----------------------------------------------------------------------------#
+parser = ArgumentParser(description = 'IUCN ecosystem validation (example using one ecosystem and one species)')
+parser.add_argument("feature", help = "vector file (e.g. shapefile) with species range map")
+parser.add_argument("ecosystem", help = "index")
+parser.add_argument("output", help = "output directory")
 
-hab = pd.read_csv(idir + 'IUCN_ecoMap_val-iucn_selectedSpecies_subset.csv', dtype={'taxonID': str, 'cid': str})
+options = parser.parse_args()
+feature = options.feature
+ecosystem = options.ecosystem
+odir = options.output
 
-fileCode = ('{0:0'+str(len(str(hab.size))) + 'd}')
+#------------------------------------------------------------------------------------------------------------------#
+# 1. read reference data
+#------------------------------------------------------------------------------------------------------------------#
 
-tid = list(np.unique(hab['taxonID'].values))[index]
-ref = rt.open(g.glob(hdir + '*.tif')[0]) # reference array
-
-#==============================================================================================================#
-# 4. build function to validat ecossystem map
-#==============================================================================================================#
-
-eco = list(np.unique(hab['cid'][hab['taxonID'] == tid]))
-n = len(eco)
-
-# access range map
-sp = fn.open(rdir + 'IUCN_habRange-' + tid + '_NA_NA.json')
+# read range map geometry
+sp = fn.open(feature)
 f = [s['geometry'] for s in sp]
 
-val = np.zeros(n, dtype='uint8')
-npx = np.zeros(n, dtype='float32')
+# extract subset of ecosystem map
+ecoMap = rt.open(ecosystem)
+ia = mask(ecoMap, f, crop=True, all_touched=True, nodata=-1, indexes=1)[0]
 
-for c in range(0, n):
-    
-    # access ecosystem map
-    ecoMap = rt.open(hdir + 'IUCN_ecoMapME_5am-' + eco[c] + '_19920101-20180101_5arcMin.vrt')
-    
-    # validate
-    ia = mask(ecoMap, f, crop=True, all_touched=True, nodata=-1, indexes=1)[0]
-    val[c] = (np.max(ia[ia > -1]) > 0).astype('uint8')
-    npx[c] = np.sum(ia > -1)
-    
-    ia = None
+#------------------------------------------------------------------------------------------------------------------#
+# 2. validate
+#------------------------------------------------------------------------------------------------------------------#
+
+# validate and extract relavent information
+val = (np.max(ia[ia > -1]) > 0).astype('uint8') # check if ecosystem occurs in range map (1 if TRUE, 0 if FALSE)
+npx = np.sum(ia > -1) # size of range map in pixels
+
+ia = None
+f = None
+sp = None
+
+#------------------------------------------------------------------------------------------------------------------#
+# 3. export validation results
+#------------------------------------------------------------------------------------------------------------------#
 
 # return data frame (with validation)
-df = pd.DataFrame({'taxonID':tid, 'check':list(val), 'code':eco, 'nr_px':npx, 'nr_eco':n})
-df.to_csv(odir + 'ecoVal-' + fileCode.format(index) + '_19920101-20180101_5arcMin.csv', index=False)
-
-print(str(index) + ' done!')
+df = pd.DataFrame({'vote':list(val), 'nr_px':npx})
+df.to_csv(odir + 'validation.csv', index=False)

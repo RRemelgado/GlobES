@@ -5,19 +5,16 @@ Created on Fri Nov  1 20:49:22 2019
 @author: rr70wedu
 """
 
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
 # 0. load required modules
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
 
 from rasterio.mask import mask
 import rasterio as rt
 import fiona as fn
 import numpy as np
-import time
 
-# start time
-tic = time.time()
-
+# climate codes in the BECK classification map
 brc = [19, 20, 23, 24, 27, 28] # boreal
 tpc = [7, 14, 15, 16, 17, 18, 21, 22, 25, 26] # temperate
 tdc = [3, 6, 11, 12, 13] # tropical (dry)
@@ -26,9 +23,9 @@ mdc = [8, 9, 10] # mediterranean
 dch = 4 # desert (hot)
 dcc = 5 # desert (cold)
 
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
 # 1. load climate map
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
 
 i = '/data/idiv_meyer/temp/GMBA/' # GMBA data directory
 ids = rt.open(i + 'BECK_climateMap-presentClass_19860101-20160101_30arcSec.tif', 'r+') # read climate map
@@ -36,178 +33,27 @@ ids = rt.open(i + 'BECK_climateMap-presentClass_19860101-20160101_30arcSec.tif',
 p = ids.meta.copy()
 p.update(driver='GTiff', compress='deflate', predict=2, zlevel=9, nodata=0)
 
-#-----------------------------------------------------------------------------#
-# 2. update climate map for known "error" (according to the IUCN)
-#-----------------------------------------------------------------------------#
-
-#=============================================================================#
-# 2.3. update "fake-mediterranean" pixels in the central africa
-#=============================================================================#
-
-sp = fn.open(i + 'centralAfrica_dry.shp')
-f = [s['geometry'] for s in sp]
-o = mask(ids, f, crop=True, indexes=1, all_touched=True, pad=True)
-t = o[1] # transform (used to determine I/) window)
-o = o[0] # extract array
-
-f = None
-sp = None
-
-px = ids.index(t.c, t.f)
-ad = o.shape
-w = rt.windows.Window(px[1], px[0], ad[1], ad[0])
-
-px = None
-ad = None
-t = None
-
-a = ids.read(1, window=w)
-a[(o > 0) & np.isin(a, mdc)] = 12
-ids.write(a, window=w, indexes=1)
-
-a = None
-o = None
-w = None
-
-#=============================================================================#
-# 2.4. update "fake-tundra" pixels in the himalayan region)
-#=============================================================================#
-
-sp = fn.open(i + 'tibetPlateau_temperate.shp')
-f = [s['geometry'] for s in sp]
-o = mask(ids, f, crop=True, indexes=1, all_touched=True, pad=True)
-t = o[1] # transform (used to determine I/) window)
-o = o[0] # extract array
-
-f = None
-sp = None
-
-px = ids.index(t.c, t.f)
-ad = o.shape
-w = rt.windows.Window(px[1], px[0], ad[1], ad[0])
-
-px = None
-ad = None
-t = None
-
-a = ids.read(1, window=w)
-a[(o > 0) & np.isin(a, [29,30])] = 7
-ids.write(a, window=w, indexes=1)
-
-a = None
-o = None
-w = None
-
-#=============================================================================#
-# 2.5. update fake-temperate pixels around the north pole
-#=============================================================================#
-
-sp = fn.open(i + 'polarFix.shp')
-f = [s['geometry'] for s in sp]
-o = mask(ids, f, crop=True, indexes=1, all_touched=True, pad=True)
-t = o[1] # transform (used to determine I/) window)
-o = o[0] # extract array
-
-f = None
-sp = None
-
-px = ids.index(t.c, t.f)
-ad = o.shape
-w = rt.windows.Window(px[1], px[0], ad[1], ad[0])
-
-px = None
-ad = None
-t = None
-
-a = ids.read(1, window=w)
-a[(o > 0) & np.isin(a, tpc)] = 29
-a[(o > 0) & np.isin(a, 5)] = 29
-ids.write(a, window=w, indexes=1)
-
-a = None
-o = None
-w = None
-
-#=============================================================================#
-# 2.6. update fake-temperate pixels around the north pole
-#=============================================================================#
-
-sp = fn.open(i + 'subarcticFix.shp')
-f = [s['geometry'] for s in sp]
-o = mask(ids, f, crop=True, indexes=1, all_touched=True, pad=True)
-t = o[1] # transform (used to determine I/) window)
-o = o[0] # extract array
-
-f = None
-sp = None
-
-px = ids.index(t.c, t.f)
-ad = o.shape
-w = rt.windows.Window(px[1], px[0], ad[1], ad[0])
-
-px = None
-ad = None
-t = None
-
-a = ids.read(1, window=w)
-a[(o > 0) & np.isin(a, tpc)] = 29
-a[(o > 0) & np.isin(a, 5)] = 29
-ids.write(a, window=w, indexes=1)
-
-a = None
-o = None
-w = None
-
-#=============================================================================#
-# 2.6. update fake-mediterranean pixels across the world
-#=============================================================================#
-
-sp = fn.open(i + 'mediterranean.shp')
-f = [s['geometry'] for s in sp]
-o = mask(ids, f, crop=True, indexes=1, all_touched=True, pad=True)
-t = o[1] # transform (used to determine I/) window)
-o = o[0] # extract array
-
-f = None
-sp = None
-
-px = ids.index(t.c, t.f)
-ad = o.shape
-w = rt.windows.Window(px[1], px[0], ad[1], ad[0])
-
-px = None
-ad = None
-t = None
-
-a = ids.read(1, window=w)
-a[(o > 0) & np.isin(a, [8,9,10])] = 11
-ids.write(a, window=w, indexes=1)
-
-a = None
-o = None
-w = None
-
-#-----------------------------------------------------------------------------#
-# 3. load layers required to evaluate mountain climates
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
+# 1. load climate map
+#----------------------------------------------------------------------------------------------------------------------------#
 
 i = '/data/idiv_meyer/00_data/processed/utilityLayers/'
 latMap = rt.open(i + 'utilityLayers-latitude_NA_10arcSec.tif')
 
 i = '/data/idiv_meyer/temp/GMBA/' # GMBA data directory
 sp = fn.open(i + 'GMBA-merge.shp') # read mountain shapefile
-#-----------------------------------------------------------------------------#
-# 4. initiate output
-#-----------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------------------------------#
+# 1. load climate map
+#----------------------------------------------------------------------------------------------------------------------------#
 
 # map of mountains with climate info
 ods = rt.open(i + 'tropicalMountains.tif', 'w+', **p)
 
-#-----------------------------------------------------------------------------#
-# 5. evaluate mountains
-#-----------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------#
+# 1. load climate map
+#----------------------------------------------------------------------------------------------------------------------------#
 
-domClim = []
 
 for s in sp:
     
@@ -278,8 +124,6 @@ for s in sp:
     
     ct = None
     cc = None
-    
-    domClim.append(dc) # preserve climate info
     
     #=========================================================================#
     # 5.4. update climate-mountain map
