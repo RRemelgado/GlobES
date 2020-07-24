@@ -1,4 +1,4 @@
-### GloBES - a global, long-term annual data cube on the extents 
+### GloBES - a Global, long-term annual data on the extents of terrestrial, freshwater, coastal, and oceanic ecosystem types at 1-km resolution
 <p align="justify">
 This repository provides the code behind GlobES, the 1<sup>st</sup> global data cube on ecosystem types, depicting per-pixel areas at 1-km resolution and at a global scale. Our data cube covers 65 ecosystem types across the terrestrial, freshwater, coastal, and oceanic domains which are in line with the habitat type definitions of the International Union of Conservation and Nature (IUCN), which is used for in the red list species assessments. The original list of ecosystems and their definitions <a href="https://www.iucnredlist.org/resources/habitat-classification-scheme">can be found here</a>.
 </p>
